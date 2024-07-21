@@ -15,7 +15,7 @@ plain='\033[0m'
 [[ $EUID -ne 0 ]] && echo -e "[${red}Error${plain}] This script must be run as root!" && exit 1
 
 cur_dir=$(pwd)
-software=(Shadowsocks-Python ShadowsocksR Shadowsocks-Go Shadowsocks-libev)
+software=(Shadowsocks-Python Shadowsocks-Go Shadowsocks-libev)
 
 libsodium_file="libsodium-1.0.17"
 libsodium_url="https://github.com/LinkCloudX/Shadowsocks-script/raw/master/src/pack/libsodium-1.0.17.tar.gz"
@@ -1053,7 +1053,7 @@ qr_generate_r() {
     local tmp2=$(echo -n "$(get_ip):${shadowsocksport}:${shadowsockprotocol}:${shadowsockscipher}:${shadowsockobfs}:${tmp1}/?obfsparam=" | base64 -w0)
     local qr_code="ssr://${tmp2}"
     echo
-    echo "Your QR Code: (For ShadowsocksR Windows, Android clients only)"
+    echo "Your QR Code: (For Shadowsocks Windows, Android clients only)"
     echo -e "${green} ${qr_code} ${plain}"
     echo -n "${qr_code}" | qrencode -s8 -o ${cur_dir}/shadowsocks_r_qr.png
     echo "Your QR Code has been saved as a PNG file path:"
