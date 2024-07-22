@@ -78,33 +78,6 @@ go_ciphers=(
   rc4-md5
 )
 
-
-protocols=(
-  origin
-  verify_deflate
-  auth_sha1_v4
-  auth_sha1_v4_compatible
-  auth_aes128_md5
-  auth_aes128_sha1
-  auth_chain_a
-  auth_chain_b
-  auth_chain_c
-  auth_chain_d
-  auth_chain_e
-  auth_chain_f
-)
-# obfs
-obfs=(
-  plain
-  http_simple
-  http_simple_compatible
-  http_post
-  http_post_compatible
-  tls1.2_ticket_auth
-  tls1.2_ticket_auth_compatible
-  tls1.2_ticket_fastauth
-  tls1.2_ticket_fastauth_compatible
-)
 # libev obfuscating
 obfs_libev=(http tls)
 # initialization parameter
@@ -419,26 +392,7 @@ EOF
     if [ ! -d "$(dirname ${shadowsocks_r_config})" ]; then
       mkdir -p $(dirname ${shadowsocks_r_config})
     fi
-#    cat >${shadowsocks_r_config} <<-EOF
-#{
-#    "server":"0.0.0.0",
-#    "server_ipv6":"::",
-#    "server_port":${shadowsocksport},
-#    "local_address":"127.0.0.1",
-#    "local_port":1080,
-#    "password":"${shadowsockspwd}",
-#     "timeout":120,
-#    "method":"${shadowsockscipher}",
-#    "protocol":"${shadowsockprotocol}",
-#    "protocol_param":"",
-#    "obfs":"${shadowsockobfs}",
-#    "obfs_param":"",
-#    "redirect":"",
-#    "dns_ipv6":false,
-#    "fast_open":${fast_open},
-#    "workers":1
-#}
-#EOF
+
   elif [ "${selected}" == "3" ]; then
     if [ ! -d "$(dirname ${shadowsocks_go_config})" ]; then
       mkdir -p $(dirname ${shadowsocks_go_config})
