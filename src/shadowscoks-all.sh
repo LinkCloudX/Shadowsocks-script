@@ -77,24 +77,7 @@ go_ciphers=(
   salsa20
   rc4-md5
 )
-r_ciphers=(
-  none
-  aes-256-cfb
-  aes-192-cfb
-  aes-128-cfb
-  aes-256-cfb8
-  aes-192-cfb8
-  aes-128-cfb8
-  aes-256-ctr
-  aes-192-ctr
-  aes-128-ctr
-  chacha20-ietf
-  chacha20
-  salsa20
-  xchacha20
-  xsalsa20
-  rc4-md5
-)
+
 
 protocols=(
   origin
@@ -436,26 +419,26 @@ EOF
     if [ ! -d "$(dirname ${shadowsocks_r_config})" ]; then
       mkdir -p $(dirname ${shadowsocks_r_config})
     fi
-    cat >${shadowsocks_r_config} <<-EOF
-{
-    "server":"0.0.0.0",
-    "server_ipv6":"::",
-    "server_port":${shadowsocksport},
-    "local_address":"127.0.0.1",
-    "local_port":1080,
-    "password":"${shadowsockspwd}",
-    "timeout":120,
-    "method":"${shadowsockscipher}",
-    "protocol":"${shadowsockprotocol}",
-    "protocol_param":"",
-    "obfs":"${shadowsockobfs}",
-    "obfs_param":"",
-    "redirect":"",
-    "dns_ipv6":false,
-    "fast_open":${fast_open},
-    "workers":1
-}
-EOF
+#    cat >${shadowsocks_r_config} <<-EOF
+#{
+#    "server":"0.0.0.0",
+#    "server_ipv6":"::",
+#    "server_port":${shadowsocksport},
+#    "local_address":"127.0.0.1",
+#    "local_port":1080,
+#    "password":"${shadowsockspwd}",
+#     "timeout":120,
+#    "method":"${shadowsockscipher}",
+#    "protocol":"${shadowsockprotocol}",
+#    "protocol_param":"",
+#    "obfs":"${shadowsockobfs}",
+#    "obfs_param":"",
+#    "redirect":"",
+#    "dns_ipv6":false,
+#    "fast_open":${fast_open},
+#    "workers":1
+#}
+#EOF
   elif [ "${selected}" == "3" ]; then
     if [ ! -d "$(dirname ${shadowsocks_go_config})" ]; then
       mkdir -p $(dirname ${shadowsocks_go_config})
@@ -868,27 +851,6 @@ install_shadowsocks_python() {
   fi
 }
 
-install_shadowsocks_r() {
-  cd ${cur_dir}
-  tar zxf ${shadowsocks_r_file}.tar.gz
-  mv ${shadowsocks_r_file}/shadowsocks /usr/local/
-  if [ -f /usr/local/shadowsocks/server.py ]; then
-    chmod +x ${shadowsocks_r_init}
-    local service_name=$(basename ${shadowsocks_r_init})
-    if check_sys packageManager yum; then
-      chkconfig --add ${service_name}
-      chkconfig ${service_name} on
-    elif check_sys packageManager apt; then
-      update-rc.d -f ${service_name} defaults
-    fi
-  else
-    echo
-    echo -e "[${red}Error${plain}] ${software[1]} install failed."
-    echo "Please visit; http://www.jpjny.xyz and contact."
-    install_cleanup
-    exit 1
-  fi
-}
 
 install_shadowsocks_go() {
   cd ${cur_dir}
@@ -947,7 +909,7 @@ install_shadowsocks_libev() {
   else
     echo
     echo -e "[${red}Error${plain}] ${software[3]} install failed."
-    echo "Please visit: http://www.jpjny.xyz and contact."
+    echo "install not complete"
     install_cleanup
     exit 1
   fi
@@ -995,18 +957,6 @@ install_completed_python() {
   echo -e "Your Encryption Method: ${red} ${shadowsockscipher} ${plain}"
 }
 
-install_completed_r() {
-  clear
-  ${shadowsocks_r_init} start
-  echo
-  echo -e "Congratulations, ${green}${software[1]}${plain} server install completed!"
-  echo -e "Your Server IP        : ${red} $(get_ip) ${plain}"
-  echo -e "Your Server Port      : ${red} ${shadowsocksport} ${plain}"
-  echo -e "Your Password         : ${red} ${shadowsockspwd} ${plain}"
-  echo -e "Your Protocol         : ${red} ${shadowsockprotocol} ${plain}"
-  echo -e "Your obfs             : ${red} ${shadowsockobfs} ${plain}"
-  echo -e "Your Encryption Method: ${red} ${shadowsockscipher} ${plain}"
-}
 
 install_completed_go() {
   clear
@@ -1044,20 +994,6 @@ qr_generate_python() {
     echo -n "${qr_code}" | qrencode -s8 -o ${cur_dir}/shadowsocks_python_qr.png
     echo "Your QR Code has been saved as a PNG file path:"
     echo -e "${green} ${cur_dir}/shadowsocks_python_qr.png ${plain}"
-  fi
-}
-
-qr_generate_r() {
-  if [ "$(command -v qrencode)" ]; then
-    local tmp1=$(echo -n "${shadowsockspwd}" | base64 -w0 | sed 's/=//g;s/\//_/g;s/+/-/g')
-    local tmp2=$(echo -n "$(get_ip):${shadowsocksport}:${shadowsockprotocol}:${shadowsockscipher}:${shadowsockobfs}:${tmp1}/?obfsparam=" | base64 -w0)
-    local qr_code="ssr://${tmp2}"
-    echo
-    echo "Your QR Code: (For Shadowsocks Windows, Android clients only)"
-    echo -e "${green} ${qr_code} ${plain}"
-    echo -n "${qr_code}" | qrencode -s8 -o ${cur_dir}/shadowsocks_r_qr.png
-    echo "Your QR Code has been saved as a PNG file path:"
-    echo -e "${green} ${cur_dir}/shadowsocks_r_qr.png ${plain}"
   fi
 }
 
@@ -1099,14 +1035,10 @@ install_main() {
     install_completed_python
     qr_generate_python
   elif [ "${selected}" == "2" ]; then
-    install_shadowsocks_r
-    install_completed_r
-    qr_generate_r
-  elif [ "${selected}" == "3" ]; then
     install_shadowsocks_go
     install_completed_go
     qr_generate_go
-  elif [ "${selected}" == "4" ]; then
+  elif [ "${selected}" == "3" ]; then
     install_mbedtls
     install_shadowsocks_libev
     install_shadowsocks_libev_obfs
@@ -1115,7 +1047,6 @@ install_main() {
   fi
 
   echo
-  echo "Welcome to visit: http://www.jpjny.xyz"
   echo "Enjoy it!"
   echo
 }
