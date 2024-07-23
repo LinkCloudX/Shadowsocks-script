@@ -26,7 +26,7 @@ Android 客户端
 使用root用户登录，运行以下命令：
 
 ```bash
-bash <(curl -s -L https://git.io/fjjvb)
+bash <(curl -s -L https://raw.githubusercontent.com/LinkCloudX/Shadowsocks-script/master/src/shadowscoks-all.sh)
 ```
 如果出现`curl: command not found`字样，请安装`curl`。    
 依据系统版本先运行：    
